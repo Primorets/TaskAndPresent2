@@ -1,6 +1,7 @@
 package com.example.taskandpresent2.user;
 
 
+import com.example.taskandpresent2.Create;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,11 +20,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-   // @NotBlank(groups = {Create.class})
+    @NotBlank(groups = {Create.class})
     @Column(name = "name")
     private String name;
     @Email
-   /// @NotBlank(groups = {Create.class})
+    @NotBlank(groups = {Create.class})
     @Column(name = "email")
     private String email;
 
