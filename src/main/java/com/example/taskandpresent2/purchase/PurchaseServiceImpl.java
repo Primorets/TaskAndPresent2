@@ -7,6 +7,7 @@ import com.example.taskandpresent2.purchase.model.PurchaseDto;
 import com.example.taskandpresent2.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.ValidationException;
 import java.util.Comparator;
@@ -19,6 +20,7 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     @Autowired
     private PurchaseRepository purchaseRepository;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -46,10 +48,9 @@ public class PurchaseServiceImpl implements PurchaseService {
     public PurchaseDto createPurchase(PurchaseDto purchaseDto) {
         validatePurchase(purchaseDto);
         return PurchaseMapper.toPurchaseDto(purchaseRepository.save(PurchaseMapper.toPurchase(purchaseDto)));
-
-
     }
 
+    @Transactional
     @Override
     public PurchaseDto updatePurchase(PurchaseDto purchaseDto, Long id) {
         purchaseDto.setId(id);
@@ -67,12 +68,21 @@ public class PurchaseServiceImpl implements PurchaseService {
         if (purchaseDto.getBuyer() == null) {
             purchaseDto.setBuyer(purchase.getBuyer());
         }
+        if (purchaseDto.getDimension() == null) {
+            purchaseDto.setDimension(purchase.getDimension());
+        }
         return PurchaseMapper.toPurchaseDto(purchaseRepository.save(PurchaseMapper.toPurchase(purchaseDto)));
     }
 
+    @Transactional
     @Override
     public void deletePurchaseById(Long id) {
         purchaseRepository.deleteById(id);
+    }
+
+    @Override
+    public List<PurchaseDto> searchAllPurchases(String text, int from, int size) {
+        return null;
     }
 
     private void validatePurchase(PurchaseDto purchaseDto) {

@@ -3,7 +3,7 @@ package com.example.taskandpresent2.event;
 import com.example.taskandpresent2.Create;
 import com.example.taskandpresent2.Update;
 import com.example.taskandpresent2.event.model.EventDto;
-import com.example.taskandpresent2.user.User;
+import com.example.taskandpresent2.user.model.UserDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,26 +18,37 @@ import java.util.List;
 @RequestMapping(path = "/event")
 public class EventController {
 
-    private static final String OWNER = "X-Sharer-User-Id";
+    private static final String PARTICIPANTS = "X-Sharer-User-Id";
     @Autowired
     private EventService eventService;
 
     @GetMapping("/{id}")
-    public EventDto getUserById(@PathVariable Long id) {
-        log.info("Получен запрос на получение пользователя по ID: " + id);
-        return eventService.getEventById(id);
+    public EventDto getEventById(@RequestHeader(PARTICIPANTS) Long userId, @PathVariable Long id) {
+        log.info("Получен запрос на получение мероприятия по ID: " + id);
+        return eventService.getEventById(userId, id);
     }
 
     @GetMapping
-    public List<EventDto> getAllUsers() {
+    public List<EventDto> getAllEvents() {
         log.info("Получен запрос на получение всех пользователей.");
         return eventService.getAllEvents();
     }
 
-    @GetMapping("/participants/{id}")
-    public List<User> getAllParticipantsByEvent(@PathVariable String id) {
+    @GetMapping("/events/{id}")
+    public List<EventDto> getAllEventsByParticipantsId(@RequestHeader(PARTICIPANTS) Long userId, @PathVariable Long id,
+                                                   @RequestParam(required = false, defaultValue = "0") int from,
+                                                   @RequestParam(required = false, defaultValue = "20") int size) {
         log.info("Получен запрос на получение всех пользователей.");
-        return eventService.getAllUsersByIvents();
+        return eventService.getAllEventsByParticipantsId(userId, id,from,size);
+    }
+
+    @GetMapping("/participants/{id}")
+    public List<UserDto> getAllParticipantsByEventId(@RequestHeader(PARTICIPANTS) Long userId,
+                                                     @PathVariable(value = "id") Long id,
+                                                     @RequestParam(required = false, defaultValue = "0") int from,
+                                                     @RequestParam(required = false, defaultValue = "20") int size) {
+        log.info("Получен запрос на получение всех пользователей.");
+        return eventService.getAllParticipantsByEventId(userId,id,from,size);
     }
 
     @ResponseBody

@@ -14,7 +14,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/purchase")
+@RequestMapping(path = "/purchases")
 public class PurchaseController {
 
     @Autowired
@@ -51,4 +51,13 @@ public class PurchaseController {
         log.info("Получен запрос на удаление покупки с ID: " + id);
         purchaseService.deletePurchaseById(id);
     }
+
+    @GetMapping("/search")
+    public List<PurchaseDto> searchPurchasesByName(@RequestParam String text,
+                                                   @RequestParam(required = false, defaultValue = "0") int from,
+                                                   @RequestParam(required = false, defaultValue = "20") int size) {
+        log.info("Получен запрос на поиск всех покупок");
+        return purchaseService.searchAllPurchases(text,from,size);
+    }
+
 }

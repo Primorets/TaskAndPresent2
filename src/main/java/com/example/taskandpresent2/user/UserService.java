@@ -15,5 +15,5 @@ public interface UserService {
 
     UserDto createUser(UserDto user);
 
-    User getUserForBookingMapper(Long id);
+    List<UserDto> searchUserByName(String text, int from, int size);
 }

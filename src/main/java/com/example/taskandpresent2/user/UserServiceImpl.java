@@ -2,12 +2,12 @@ package com.example.taskandpresent2.user;
 
 import com.example.taskandpresent2.exception.DuplicateEmailException;
 import com.example.taskandpresent2.exception.UserNotFoundException;
+import com.example.taskandpresent2.exception.ValidationException;
 import com.example.taskandpresent2.user.model.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import javax.validation.ValidationException;
 import java.util.List;
 import java.util.Objects;
 
@@ -69,9 +69,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserForBookingMapper(Long id) {
-        return userRepository.findById(id).orElseThrow(()
-                -> new UserNotFoundException("Пользователь не был зарегестрирован."));
+    public List<UserDto> searchUserByName(String text, int from, int size) {
+        return userRepository.findAll().stream()
+                .filter(user -> user.getName().contains(text))
+                .map(UserMapper::toUserDto)
+                .collect(toList());
     }
 
     private void validateUser(UserDto user) {

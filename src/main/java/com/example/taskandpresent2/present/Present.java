@@ -1,18 +1,12 @@
 package com.example.taskandpresent2.present;
 
-import com.example.taskandpresent2.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
-
+/*
 @Data
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "present", schema = "public")
-public class Present {
+@Table(name = "present", schema = "public")*/
+public class Present {/*
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -27,5 +21,5 @@ public class Present {
 
     @Column(name = "is_consumable")
     private boolean IsConsumable;
-
+*/
 }

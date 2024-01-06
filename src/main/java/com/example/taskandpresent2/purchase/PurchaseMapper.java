@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 public class PurchaseMapper {
     public static Purchase toPurchase(PurchaseDto purchaseDto) {
         return new Purchase(purchaseDto.getId(),
-                purchaseDto.getPurchases(),
+                purchaseDto.getName(),
                 purchaseDto.getStatusPurchases(),
                 purchaseDto.isIsConsumable(),
                 purchaseDto.getBuyer(),
@@ -16,7 +16,7 @@ public class PurchaseMapper {
     }
     public static PurchaseDto toPurchaseDto(Purchase purchase){
         return new PurchaseDto(purchase.getId(),
-                purchase.getPurchases(),
+                purchase.getName(),
                 purchase.getStatusPurchases(),
                 purchase.isIsConsumable(),
                 purchase.getBuyer(),

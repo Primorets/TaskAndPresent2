@@ -32,6 +32,14 @@ public class UserController {
         return userService.getAllUsers();
     }
 
+    @GetMapping("/search")
+    public List<UserDto> searchUsersByName(@RequestParam String text,
+                                           @RequestParam(required = false, defaultValue = "0") int from,
+                                           @RequestParam(required = false, defaultValue = "20") int size) {
+        log.info("Получен запрос на получение предмета по строке");
+        return userService.searchUserByName(text, from, size);
+    }
+
     @ResponseBody
     @PostMapping
     public UserDto createUser(@RequestBody @Validated(Create.class) UserDto userDto) {
@@ -51,4 +59,7 @@ public class UserController {
         log.info("Получен запрос на удаление пользователя с ID: " + id);
         userService.deleteUserById(id);
     }
+
+
+
 }

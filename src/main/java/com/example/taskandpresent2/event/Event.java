@@ -13,26 +13,28 @@ import java.time.LocalDateTime;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "event", schema = "public")
+@Table(name = "events", schema = "public")
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;//Уникальный идентификационный номер задачи, по которому её можно будет найти.
+    private Long id;//Уникальный идентификационный номер задачи, по которому её можно будет найти.
     @Column(name = "name")
     private String name;//Название, кратко описывающее суть задачи (например, «Переезд»).
     @Column(name = "description")
     private String description;//Описание, в котором раскрываются детали.
+
     @Enumerated(EnumType.STRING)
+    @Column(name = "status_event")
     private StatusEvent status;//Статус, отображающий её прогресс.
 
     @ManyToOne()
     @JoinColumn(name = "participant_id", referencedColumnName = "id")
-    private User participants;//пользователи, которые учавствуют в мероприятии
+    private User participant;//пользователи, которые учавствуют в мероприятии
 
     @ManyToOne()
     @JoinColumn(name = "purchase_id", referencedColumnName = "id")
-    private Purchase purchases; //класс шаблон
+    private Purchase purchase; //класс шаблон
 
     @Column(name = "start_date")
     private LocalDateTime start;

@@ -16,4 +16,6 @@ public interface PurchaseService {
     PurchaseDto updatePurchase(PurchaseDto user, Long id);
 
     void deletePurchaseById(Long id);
+
+    List<PurchaseDto> searchAllPurchases(String text, int from, int size);
 }

@@ -21,6 +21,7 @@ public class Purchase {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "status_purchases")
     @Enumerated(EnumType.STRING)
     private StatusPurchases statusPurchases;
 
@@ -31,6 +32,7 @@ public class Purchase {
     @JoinColumn(name = "buyer_id", referencedColumnName = "id")
     private User buyer;
 
+    @Column(name = "dimension")
     @Enumerated(EnumType.STRING)
     private Dimension dimension;
     @Column(name = "quantity")

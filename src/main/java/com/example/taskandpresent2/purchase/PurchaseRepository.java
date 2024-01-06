@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
 
-    public List<Purchase> getPurchasesByBuyer_Id(Long buyerId, Pageable pageable);
+    List<Purchase> getPurchasesByBuyer_Id(Long buyerId, Pageable pageable);
 
 }
