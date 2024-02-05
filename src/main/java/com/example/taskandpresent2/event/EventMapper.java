@@ -20,8 +20,8 @@ public class EventMapper {
                 event.getName(),
                 event.getDescription(),
                 event.getStatus(),
-                event.getParticipant(),
-                event.getPurchase(),
+                event.getParticipants(),
+                event.getPurchases(),
                 event.getStart(),
                 event.getEnd());
     }

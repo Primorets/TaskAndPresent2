@@ -1,6 +1,7 @@
 package com.example.taskandpresent2.event;
 
 import com.example.taskandpresent2.event.model.EventDto;
+import com.example.taskandpresent2.purchase.model.PurchaseDto;
 import com.example.taskandpresent2.user.model.UserDto;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,4 +24,8 @@ public interface EventService {
     void deleteEventById(Long id);
 
     List<UserDto> getAllParticipantsByEventId(Long userId, Long id, int from, int size);
+
+    List<PurchaseDto> getAllPurchaseByEventId(Long userId, Long id, int from, int size);
+
+    List<UserDto> addUserToEvent(EventDto eventDto, Long id, int from, int size);
 }

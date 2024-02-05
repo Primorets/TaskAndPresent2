@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -15,10 +16,8 @@ public class EventDto {
     private String name;//Название, кратко описывающее суть задачи (например, «Переезд»).
     private String description;//Описание, в котором раскрываются детали.
     private StatusEvent status;//Статус, отображающий её прогресс.
-    private User participants;//пользователи, которые учавствуют в мероприятии
-    private Purchase purchases; //класс шаблон
+    private List<User> participants;//пользователи, которые учавствуют в мероприятии
+    private List<Purchase> purchases; //класс шаблон
     private LocalDateTime start;
     private LocalDateTime end;
-
-
 }

@@ -17,6 +17,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping(path = "/users")
 public class UserController {
+
+    private static final String USER = "X-Sharer-User-Id";
     @Autowired
     private UserService userService;
 
@@ -32,12 +34,25 @@ public class UserController {
         return userService.getAllUsers();
     }
 
+    @GetMapping("friends/{id}")
+    public List<UserDto> getUserFriends(@PathVariable Long id) {
+        log.info("Получен запрос на получение всех друзей.");
+        return userService.getALlFriends(id);
+    }
+
     @GetMapping("/search")
     public List<UserDto> searchUsersByName(@RequestParam String text,
                                            @RequestParam(required = false, defaultValue = "0") int from,
                                            @RequestParam(required = false, defaultValue = "20") int size) {
         log.info("Получен запрос на получение предмета по строке");
         return userService.searchUserByName(text, from, size);
+    }
+
+    @PatchMapping ("/friends/{friendId}")
+    public UserDto addFriend(@RequestHeader (USER) Long id, @PathVariable Long friendId) {
+        userService.addFriend(id, friendId);
+        log.info("Пользователю: " + " ID: " + id + " добавлен друг: ID:" + friendId);
+        return userService.getUserById(id);
     }
 
     @ResponseBody
@@ -59,7 +74,4 @@ public class UserController {
         log.info("Получен запрос на удаление пользователя с ID: " + id);
         userService.deleteUserById(id);
     }
-
-
-
 }

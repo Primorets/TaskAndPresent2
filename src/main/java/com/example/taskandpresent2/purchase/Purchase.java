@@ -26,7 +26,7 @@ public class Purchase {
     private StatusPurchases statusPurchases;
 
     @Column(name = "is_consumable")
-    private boolean IsConsumable;
+    private boolean isConsumable;// расходник или нет
 
     @ManyToOne
     @JoinColumn(name = "buyer_id", referencedColumnName = "id")

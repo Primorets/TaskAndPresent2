@@ -82,7 +82,10 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     @Override
     public List<PurchaseDto> searchAllPurchases(String text, int from, int size) {
-        return null;
+        return purchaseRepository.searchPurchasesByName(text, Pagination.makePageRequest(from,size)).stream()
+                .filter(purchase -> purchase.getName().contains(text))
+                .map(PurchaseMapper::toPurchaseDto)
+                .collect(toList());
     }
 
     private void validatePurchase(PurchaseDto purchaseDto) {

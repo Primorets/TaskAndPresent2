@@ -17,6 +17,7 @@ import java.util.List;
 @RequestMapping(path = "/purchases")
 public class PurchaseController {
 
+    private static final String BUYER = "X-Sharer-User-Id";
     @Autowired
     private PurchaseService purchaseService;
 
@@ -30,6 +31,14 @@ public class PurchaseController {
     public List<PurchaseDto> getAllPurchases() {
         log.info("Получен запрос на получение всех покупок.");
         return purchaseService.getAllPurchases();
+    }
+
+    @GetMapping("/user_purchases")
+    public List<PurchaseDto> getAllPurchasesByBuyerId(@RequestHeader(BUYER) Long userId,
+                                                      @RequestParam(required = false, defaultValue = "0") int from,
+                                                      @RequestParam(required = false, defaultValue = "20") int size) {
+        log.info("Получен запрос на получение всех покупок пользователем с ID: " + userId);
+        return purchaseService.getAllPurchasesByBuyerId(userId, from, size);
     }
 
     @ResponseBody
@@ -57,7 +66,7 @@ public class PurchaseController {
                                                    @RequestParam(required = false, defaultValue = "0") int from,
                                                    @RequestParam(required = false, defaultValue = "20") int size) {
         log.info("Получен запрос на поиск всех покупок");
-        return purchaseService.searchAllPurchases(text,from,size);
+        return purchaseService.searchAllPurchases(text, from, size);
     }
 
 }

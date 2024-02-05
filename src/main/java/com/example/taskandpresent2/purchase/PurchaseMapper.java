@@ -18,7 +18,7 @@ public class PurchaseMapper {
         return new PurchaseDto(purchase.getId(),
                 purchase.getName(),
                 purchase.getStatusPurchases(),
-                purchase.isIsConsumable(),
+                purchase.isConsumable(),
                 purchase.getBuyer(),
                 purchase.getDimension(),
                 purchase.getQuantity());

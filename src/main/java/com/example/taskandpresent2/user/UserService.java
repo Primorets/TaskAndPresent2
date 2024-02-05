@@ -9,6 +9,8 @@ public interface UserService {
 
     List<UserDto> getAllUsers();
 
+    List<UserDto> getALlFriends(Long userId);
+
     void deleteUserById(Long id);
 
     UserDto updateUser(UserDto user, Long id);
@@ -16,4 +18,6 @@ public interface UserService {
     UserDto createUser(UserDto user);
 
     List<UserDto> searchUserByName(String text, int from, int size);
+
+    void addFriend(Long id, Long friendId);
 }
