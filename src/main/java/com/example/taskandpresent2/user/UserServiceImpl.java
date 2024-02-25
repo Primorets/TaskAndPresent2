@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,32 +38,38 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserDto updateUser(UserDto user, Long id) {
-        user.setId(id);
-        User user1 = userRepository.findById(user.getId()).orElseThrow(()
+    public UserDto updateUser(UserDto userDto, Long id) {
+        userDto.setId(id);
+        User user1 = userRepository.findById(userDto.getId()).orElseThrow(()
                 -> new UserNotFoundException("Пользователь не был зарегестрирован."));
-        if (user.getEmail() == null) {
-            user.setEmail(user1.getEmail());
+        if (userDto.getEmail() == null) {
+            userDto.setEmail(user1.getEmail());
         }
-        if (user.getName() == null) {
-            user.setName(user1.getName());
+        if (userDto.getName() == null) {
+            userDto.setName(user1.getName());
         }
         if (userRepository.findById(id).stream()
-                .filter(user2 -> !Objects.equals(user2.getId(), user.getId()))
+                .filter(user2 -> !Objects.equals(user2.getId(), userDto.getId()))
                 .anyMatch(user2 -> user2.getEmail()
-                        .equals(user.getEmail()))) {
+                        .equals(userDto.getEmail()))) {
             throw new DuplicateEmailException("Email уже зарегестрирован");
 
         }
-        return UserMapper.toUserDto(userRepository.save(UserMapper.toUser(user)));
+        if (userDto.getEventDtoList() == null) {
+            userDto.setEventDtoList(new ArrayList<>());
+        }
+        return UserMapper.toUserDto(userRepository.save(UserMapper.toUser(userDto)));
     }
 
     @Transactional
     @Override
-    public UserDto createUser(UserDto user) {
-        validateUser(user);
+    public UserDto createUser(UserDto userDto) {
+        validateUser(userDto);
         try {
-            return UserMapper.toUserDto(userRepository.save(UserMapper.toUser(user)));
+            if (userDto.getEventDtoList() == null) {
+                userDto.setEventDtoList(new ArrayList<>());
+            }
+            return UserMapper.toUserDto(userRepository.save(UserMapper.toUser(userDto)));
         } catch (DuplicateEmailException duplicateEmailException) {
             throw new DuplicateEmailException("Email уже зарегестрирован");
         }

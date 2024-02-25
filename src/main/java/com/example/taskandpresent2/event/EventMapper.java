@@ -10,19 +10,19 @@ public class EventMapper {
                 eventDto.getName(),
                 eventDto.getDescription(),
                 eventDto.getStatus(),
-                eventDto.getParticipants(),
-                eventDto.getPurchases(),
                 eventDto.getStart(),
-                eventDto.getEnd());
+                eventDto.getEnd(),
+                eventDto.getParticipants(),
+                eventDto.getPurchases());
     }
     public static EventDto toEventDto(Event event){
         return new EventDto(event.getId(),
                 event.getName(),
                 event.getDescription(),
                 event.getStatus(),
-                event.getParticipant(),
-                event.getPurchase(),
                 event.getStart(),
-                event.getEnd());
+                event.getEnd(),
+                event.getParticipants(),
+                event.getPurchases());
     }
 }

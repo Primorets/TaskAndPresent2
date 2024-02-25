@@ -3,6 +3,7 @@ package com.example.taskandpresent2.event;
 import com.example.taskandpresent2.Create;
 import com.example.taskandpresent2.Update;
 import com.example.taskandpresent2.event.model.EventDto;
+import com.example.taskandpresent2.purchase.model.PurchaseDto;
 import com.example.taskandpresent2.user.model.UserDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,6 +52,14 @@ public class EventController {
         return eventService.getAllParticipantsByEventId(userId,id,from,size);
     }
 
+    @GetMapping("/event_purchases/{id}")
+    public List<PurchaseDto> getAllPurchaseByEventId(@RequestHeader(PARTICIPANTS) Long userId, @PathVariable Long id,
+                                                     @RequestParam(required = false, defaultValue = "0") int from,
+                                                     @RequestParam(required = false, defaultValue = "20") int size){
+        log.info("Получен запрос на получение всех покуп");
+        return eventService.getAllPurchaseByEventId(userId,id,from,size);
+    }
+
     @ResponseBody
     @PostMapping
     public EventDto createUser(@RequestBody @Validated(Create.class) EventDto EventDto) {
@@ -64,10 +73,20 @@ public class EventController {
         log.info("Получен запрос на изменение данных о пользователе с ID: " + id);
         return eventService.updateEvent(user, id);
     }
+    @ResponseBody
+    @PatchMapping("/add_user/{id}")
+    public List<UserDto> addUserToEvent (@RequestBody @Validated(Update.class) EventDto eventDto,
+                                         @PathVariable Long id,
+                                         @RequestParam(required = false, defaultValue = "0") int from,
+                                         @RequestParam(required = false, defaultValue = "20") int size){
+        return eventService.addUserToEvent(eventDto,id,from,size);
+    }
 
     @DeleteMapping("/{id}")
     public void deleteUserById(@PathVariable Long id) {
         log.info("Получен запрос на удаление пользователя с ID: " + id);
         eventService.deleteEventById(id);
     }
+
+
 }

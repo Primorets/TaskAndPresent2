@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Entity
@@ -28,17 +29,20 @@ public class Event {
     @Column(name = "status_event")
     private StatusEvent status;//Статус, отображающий её прогресс.
 
-    @ManyToOne()
-    @JoinColumn(name = "participant_id", referencedColumnName = "id")
-    private User participant;//пользователи, которые учавствуют в мероприятии
-
-    @ManyToOne()
-    @JoinColumn(name = "purchase_id", referencedColumnName = "id")
-    private Purchase purchase; //класс шаблон
-
     @Column(name = "start_date")
     private LocalDateTime start;
 
     @Column(name = "end_date")
     private LocalDateTime end;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "event_participants",joinColumns = @JoinColumn(name = "event_id",
+            referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "participant_id",referencedColumnName = "id"))
+    private List<User> participants;//пользователи, которые учавствуют в мероприятии
+
+    @OneToMany
+    @JoinTable(name = "event_purchases",
+            joinColumns = @JoinColumn(name = "purchase_id",referencedColumnName = "id"))
+    private List<Purchase> purchases;
 }

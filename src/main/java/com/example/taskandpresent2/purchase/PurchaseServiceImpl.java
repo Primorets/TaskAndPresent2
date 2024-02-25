@@ -2,6 +2,7 @@ package com.example.taskandpresent2.purchase;
 
 import com.example.taskandpresent2.exception.PurchaseNotFoundException;
 import com.example.taskandpresent2.exception.UserNotFoundException;
+import com.example.taskandpresent2.exception.ValidationException;
 import com.example.taskandpresent2.pageable.Pagination;
 import com.example.taskandpresent2.purchase.model.PurchaseDto;
 import com.example.taskandpresent2.user.UserRepository;
@@ -9,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.ValidationException;
 import java.util.Comparator;
 import java.util.List;
 
@@ -86,8 +86,16 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     private void validatePurchase(PurchaseDto purchaseDto) {
-        if (purchaseDto.getName().isEmpty() || purchaseDto.getName().contains(" ")) {
+        if (purchaseDto.getName().isEmpty() || purchaseDto.getName() == null) {
             throw new ValidationException("Введено пустое имя");
         }
+        if (purchaseDto.getStatusPurchases() == null) {
+            purchaseDto.setStatusPurchases(StatusPurchases.NEED);
+        } else if (!purchaseDto.getStatusPurchases().equals(StatusPurchases.NEED)
+                ||!purchaseDto.getStatusPurchases().equals(StatusPurchases.ALREADY_HAS)
+                ||!purchaseDto.getStatusPurchases().equals(StatusPurchases.BOUGHT)) {
+            throw new ValidationException("Указан не существующий статус");
+        }
+
     }
 }

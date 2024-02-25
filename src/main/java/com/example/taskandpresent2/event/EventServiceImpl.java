@@ -4,8 +4,10 @@ import com.example.taskandpresent2.event.model.EventDto;
 import com.example.taskandpresent2.exception.PurchaseNotFoundException;
 import com.example.taskandpresent2.exception.UserNotFoundException;
 import com.example.taskandpresent2.pageable.Pagination;
+import com.example.taskandpresent2.purchase.PurchaseMapper;
+import com.example.taskandpresent2.purchase.model.PurchaseDto;
 import com.example.taskandpresent2.user.UserMapper;
-import com.example.taskandpresent2.user.UserRepository;
+import com.example.taskandpresent2.user.UserService;
 import com.example.taskandpresent2.user.model.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +25,7 @@ public class EventServiceImpl implements EventService {
     private EventRepository eventRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
 
     @Override
@@ -63,12 +65,6 @@ public class EventServiceImpl implements EventService {
         if (eventDto.getDescription() == null) {
             eventDto.setDescription(event.getDescription());
         }
-        if (eventDto.getPurchases() == null) {
-            eventDto.setPurchases(event.getPurchase());
-        }
-        if (eventDto.getParticipants() == null) {
-            eventDto.setParticipants(event.getParticipant());
-        }
         if (eventDto.getStatus() == null) {
             eventDto.setStatus(event.getStatus());
         }
@@ -83,9 +79,22 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<UserDto> getAllParticipantsByEventId(Long userId, Long id, int from, int size) {
-        return eventRepository.findAllByParticipantId(userId, Pagination.makePageRequest(from, size)).stream()
-                .map(Event::getParticipant).map(UserMapper::toUserDto)
-                .collect(toList());
+        return eventRepository.findAllUserByEventId(id, Pagination.makePageRequest(from, size)).stream()
+                .map(UserMapper::toUserDto).collect(toList());
+    }
+
+    @Override
+    public List<PurchaseDto> getAllPurchaseByEventId(Long userId, Long id, int from, int size) {
+        return eventRepository.findAllPurchasesByEventId(id, Pagination.makePageRequest(from, size)).stream()
+                .map(PurchaseMapper::toPurchaseDto).collect(toList());
+    }
+
+    @Override
+    public List<UserDto> addUserToEvent(EventDto eventDto, Long id, int from, int size) {
+        eventDto.getParticipants().add(UserMapper.toUser(userService.getUserById(id)));
+        eventRepository.save(EventMapper.toEvent(eventDto));
+        return eventRepository.findAllUserByEventId(eventDto.getId(), Pagination.makePageRequest(from, size)).stream()
+                .map(UserMapper::toUserDto).collect(toList());
     }
 
     private void validateEvent(EventDto eventDto) {

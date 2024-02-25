@@ -36,3 +36,21 @@ CREATE TABLE IF NOT EXISTS events
     CONSTRAINT FK_EVENT_FOR_PARTICIPANTS_ID FOREIGN KEY (participant_id) REFERENCES users (id),
     CONSTRAINT FK_EVENT_FOR_PURCHASE_ID FOREIGN KEY (purchase_id) REFERENCES purchases (id)
 );
+
+CREATE TABLE IF NOT EXISTS event_purchases
+(
+    event_id    BIGINT ,
+    purchase_id BIGINT ,
+
+    CONSTRAINT PK_EVENT_ID PRIMARY KEY (event_id),
+    CONSTRAINT FK_EVENT_FOR_PURCHASES_ID FOREIGN KEY (purchase_id) REFERENCES purchases (id)
+);
+
+CREATE TABLE IF NOT EXISTS event_participants
+(
+    event_id       BIGINT ,
+    participant_id BIGINT ,
+
+    CONSTRAINT PK_EVENTS PRIMARY KEY (event_id),
+    CONSTRAINT FK_EVENT_FOR_PARTICIPANTS FOREIGN KEY (participant_id) REFERENCES users (id)
+);
