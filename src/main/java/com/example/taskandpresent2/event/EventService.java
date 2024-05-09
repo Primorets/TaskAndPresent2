@@ -11,11 +11,13 @@ public interface EventService {
 
     EventDto getEventById(Long userId, Long id);
 
+    EventDto getEventByIdForPurchase(Long id);
+
     List<EventDto> getAllEvents();
 
     List<EventDto> getAllEventsByParticipantsId(Long buyerId,Long participantsId, int from, int size);
 
-    EventDto createEvent(EventDto eventDto);
+    EventDto createEvent(EventDto eventDto, Long adminId);
 
     @Transactional
     EventDto updateEvent(EventDto eventDto, Long id);
@@ -27,5 +29,7 @@ public interface EventService {
 
     List<PurchaseDto> getAllPurchaseByEventId(Long userId, Long id, int from, int size);
 
-    List<UserDto> addUserToEvent(EventDto eventDto, Long id, int from, int size);
+    List<UserDto> addUserToEvent(Long eventId, Long id, int from, int size);
+
+    boolean checkUserInEvent(Long userId, Long eventId);
 }

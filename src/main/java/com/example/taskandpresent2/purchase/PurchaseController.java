@@ -17,6 +17,8 @@ import java.util.List;
 @RequestMapping(path = "/purchases")
 public class PurchaseController {
 
+    private static final String PARTICIPANTS = "X-Sharer-User-Id";
+
     @Autowired
     private PurchaseService purchaseService;
 
@@ -34,16 +36,19 @@ public class PurchaseController {
 
     @ResponseBody
     @PostMapping
-    public PurchaseDto createPurchase(@RequestBody @Validated(Create.class) PurchaseDto PurchaseDto) {
+    public PurchaseDto createPurchase(@RequestHeader(PARTICIPANTS) Long userId,
+                                      @RequestBody @Validated(Create.class) PurchaseDto PurchaseDto) {
         log.info("Добавлена покупка: " + PurchaseDto);
-        return purchaseService.createPurchase(PurchaseDto);
+        return purchaseService.createPurchase(userId, PurchaseDto);
     }
 
     @ResponseBody
     @PatchMapping("/{id}")
-    public PurchaseDto updatePurchase(@RequestBody @Validated(Update.class) PurchaseDto user, @PathVariable Long id) {
+    public PurchaseDto updatePurchase(@RequestHeader(PARTICIPANTS) Long userId,
+                                      @RequestBody @Validated(Update. class) PurchaseDto purchaseDto,
+                                      @PathVariable Long id) {
         log.info("Получен запрос на изменение данных о покупке с ID: " + id);
-        return purchaseService.updatePurchase(user, id);
+        return purchaseService.updatePurchase(userId,purchaseDto, id);
     }
 
     @DeleteMapping("/{id}")
@@ -59,5 +64,4 @@ public class PurchaseController {
         log.info("Получен запрос на поиск всех покупок");
         return purchaseService.searchAllPurchases(text,from,size);
     }
-
 }

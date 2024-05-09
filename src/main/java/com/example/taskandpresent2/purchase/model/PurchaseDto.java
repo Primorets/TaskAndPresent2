@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+
 @Data
 @AllArgsConstructor
 public class PurchaseDto {
@@ -14,6 +15,9 @@ public class PurchaseDto {
     private String name;
     private StatusPurchases statusPurchases;
     private boolean IsConsumable;
+
+    private Long eventDtoId;
+
     @JsonIgnore
     private User buyer;
     private Dimension dimension;

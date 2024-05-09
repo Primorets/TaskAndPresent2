@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.ValidationException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -30,6 +31,13 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventDto getEventById(Long userId, Long id) {
+        //проверка на вхождение пользователя в мероприятие
+        return EventMapper.toEventDto(eventRepository.findById(id).orElseThrow(()
+                -> new PurchaseNotFoundException("Покупка не была создана.")));
+    }
+
+    @Override
+    public EventDto getEventByIdForPurchase(Long id){
         return EventMapper.toEventDto(eventRepository.findById(id).orElseThrow(()
                 -> new PurchaseNotFoundException("Покупка не была создана.")));
     }
@@ -48,9 +56,23 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventDto createEvent(EventDto eventDto) {
+    public EventDto createEvent(EventDto eventDto,Long adminId) {
         validateEvent(eventDto);
-        return EventMapper.toEventDto(eventRepository.save(EventMapper.toEvent(eventDto)));
+        if (eventDto.getStatus()== null) {
+            eventDto.setStatus(StatusEvent.NEW);
+        }
+        if (eventDto.getParticipants() == null) {
+            eventDto.setParticipants(new ArrayList<>());
+        }
+        if (eventDto.getPurchases() == null) {
+            eventDto.setPurchases(new ArrayList<>());
+        }
+        EventDto finalEvent= EventMapper.toEventDto(eventRepository.save(EventMapper.toEvent(eventDto)));
+        UserDto admin = userService.getUserById(adminId);
+        finalEvent.getParticipants().add(admin);
+        eventRepository.save(EventMapper.toEvent(finalEvent));
+
+        return getEventById(admin.getId(), finalEvent.getId());
     }
 
     @Transactional
@@ -90,8 +112,9 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<UserDto> addUserToEvent(EventDto eventDto, Long id, int from, int size) {
-        eventDto.getParticipants().add(UserMapper.toUser(userService.getUserById(id)));
+    public List<UserDto> addUserToEvent(Long eventId, Long id, int from, int size) {
+        EventDto eventDto = getEventById(id,eventId);
+        eventDto.getParticipants().add(userService.getUserById(id));
         eventRepository.save(EventMapper.toEvent(eventDto));
         return eventRepository.findAllUserByEventId(eventDto.getId(), Pagination.makePageRequest(from, size)).stream()
                 .map(UserMapper::toUserDto).collect(toList());
@@ -101,5 +124,12 @@ public class EventServiceImpl implements EventService {
         if (eventDto.getName().isEmpty()||eventDto.getName().equals(" ")) {
             throw new ValidationException("Введено пустое имя");
         }
+    }
+    @Override
+    public boolean checkUserInEvent(Long userId, Long eventId){
+        if(eventRepository.findAllUsersIdByEventId(userId, eventId) != null){
+            return true;
+        }
+        return false;
     }
 }

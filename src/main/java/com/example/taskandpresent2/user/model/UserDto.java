@@ -19,5 +19,4 @@ public class UserDto {
     @NotBlank(groups = {Create.class})
     private String email;
     private List<EventDto> eventDtoList;
-
 }

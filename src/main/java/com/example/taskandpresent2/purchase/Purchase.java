@@ -1,5 +1,6 @@
 package com.example.taskandpresent2.purchase;
 
+import com.example.taskandpresent2.event.Event;
 import com.example.taskandpresent2.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,6 +28,10 @@ public class Purchase {
 
     @Column(name = "is_consumable")
     private boolean IsConsumable;
+
+    @ManyToOne
+    @JoinColumn(name = "event_id", referencedColumnName = "id")
+    private Event event;
 
     @ManyToOne
     @JoinColumn(name = "buyer_id", referencedColumnName = "id")

@@ -1,11 +1,11 @@
 package com.example.taskandpresent2.purchase;
 
+import com.example.taskandpresent2.event.EventService;
 import com.example.taskandpresent2.exception.PurchaseNotFoundException;
 import com.example.taskandpresent2.exception.UserNotFoundException;
 import com.example.taskandpresent2.exception.ValidationException;
 import com.example.taskandpresent2.pageable.Pagination;
 import com.example.taskandpresent2.purchase.model.PurchaseDto;
-import com.example.taskandpresent2.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,12 +18,12 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class PurchaseServiceImpl implements PurchaseService {
 
+    PurchaseMapper purchaseMapper = new PurchaseMapper();
     @Autowired
     private PurchaseRepository purchaseRepository;
 
     @Autowired
-    private UserRepository userRepository;
-
+    private EventService eventService;
 
     @Override
     public PurchaseDto getPurchaseById(Long id) {
@@ -33,7 +33,9 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     @Override
     public List<PurchaseDto> getAllPurchases() {
-        return purchaseRepository.findAll().stream().map(PurchaseMapper::toPurchaseDto).collect(toList());
+        return purchaseRepository.findAll().stream()
+                .map(PurchaseMapper::toPurchaseDto)
+                .collect(toList());
     }
 
     @Override
@@ -45,14 +47,16 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     @Override
-    public PurchaseDto createPurchase(PurchaseDto purchaseDto) {
+    public PurchaseDto createPurchase(Long userId, PurchaseDto purchaseDto) {
         validatePurchase(purchaseDto);
-        return PurchaseMapper.toPurchaseDto(purchaseRepository.save(PurchaseMapper.toPurchase(purchaseDto)));
+        checkUserInEvent(userId,purchaseDto.getEventDtoId());
+        return PurchaseMapper.toPurchaseDto(purchaseRepository.save(purchaseMapper.toPurchase(purchaseDto)));
     }
 
     @Transactional
     @Override
-    public PurchaseDto updatePurchase(PurchaseDto purchaseDto, Long id) {
+    public PurchaseDto updatePurchase(Long userId,PurchaseDto purchaseDto, Long id) {
+        checkUserInEvent(userId,purchaseDto.getEventDtoId());
         purchaseDto.setId(id);
         Purchase purchase = purchaseRepository.findById(purchaseDto.getId()).orElseThrow(()
                 -> new UserNotFoundException("Пользователь не был зарегестрирован."));
@@ -71,7 +75,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         if (purchaseDto.getDimension() == null) {
             purchaseDto.setDimension(purchase.getDimension());
         }
-        return PurchaseMapper.toPurchaseDto(purchaseRepository.save(PurchaseMapper.toPurchase(purchaseDto)));
+        return PurchaseMapper.toPurchaseDto(purchaseRepository.save(purchaseMapper.toPurchase(purchaseDto)));
     }
 
     @Transactional
@@ -82,7 +86,10 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     @Override
     public List<PurchaseDto> searchAllPurchases(String text, int from, int size) {
-        return null;
+        return purchaseRepository.searchPurchasesByName(text,
+                        Pagination.makePageRequest(from, size)).stream()
+                .map(PurchaseMapper::toPurchaseDto)
+                .collect(toList());
     }
 
     private void validatePurchase(PurchaseDto purchaseDto) {
@@ -91,11 +98,19 @@ public class PurchaseServiceImpl implements PurchaseService {
         }
         if (purchaseDto.getStatusPurchases() == null) {
             purchaseDto.setStatusPurchases(StatusPurchases.NEED);
-        } else if (!purchaseDto.getStatusPurchases().equals(StatusPurchases.NEED)
-                ||!purchaseDto.getStatusPurchases().equals(StatusPurchases.ALREADY_HAS)
-                ||!purchaseDto.getStatusPurchases().equals(StatusPurchases.BOUGHT)) {
+        } else if (!(purchaseDto.getStatusPurchases().equals(StatusPurchases.NEED)
+                || purchaseDto.getStatusPurchases().equals(StatusPurchases.ALREADY_HAS)
+                || purchaseDto.getStatusPurchases().equals(StatusPurchases.BOUGHT))) {
             throw new ValidationException("Указан не существующий статус");
         }
+        if (purchaseDto.getEventDtoId() == null || purchaseDto.getEventDtoId() == 0) {
+            throw new ValidationException("Не указано id мероприятия");
+        }
+    }
 
+    private void checkUserInEvent(Long userId, Long eventId) {
+        if (!eventService.checkUserInEvent(userId, eventId)) {
+            throw new UserNotFoundException("User id: " + userId + "не учавствует в мероприятии id:" + eventId);
+        }
     }
 }

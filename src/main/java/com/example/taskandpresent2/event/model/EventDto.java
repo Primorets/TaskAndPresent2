@@ -1,8 +1,8 @@
 package com.example.taskandpresent2.event.model;
 
 import com.example.taskandpresent2.event.StatusEvent;
-import com.example.taskandpresent2.purchase.Purchase;
-import com.example.taskandpresent2.user.User;
+import com.example.taskandpresent2.purchase.model.PurchaseDto;
+import com.example.taskandpresent2.user.model.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -19,8 +19,9 @@ public class EventDto {
     private LocalDateTime start;
     private LocalDateTime end;
 
-    private List<User> participants;//пользователи, которые учавствуют в мероприятии
-    private List<Purchase> purchases; //класс шаблон
+
+    private List<UserDto> participants;//пользователи, которые учавствуют в мероприятии
+    private List<PurchaseDto> purchases; //класс шаблон
 
 
 }

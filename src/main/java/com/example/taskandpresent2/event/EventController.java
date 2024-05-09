@@ -62,24 +62,26 @@ public class EventController {
 
     @ResponseBody
     @PostMapping
-    public EventDto createUser(@RequestBody @Validated(Create.class) EventDto EventDto) {
+    public EventDto createEvent(@RequestBody @Validated(Create.class) EventDto EventDto,
+                                @RequestHeader(PARTICIPANTS) Long adminId ) {
         log.info("Добавлен пользователь: " + EventDto);
-        return eventService.createEvent(EventDto);
+        return eventService.createEvent(EventDto,adminId);
     }
 
     @ResponseBody
     @PatchMapping("/{id}")
-    public EventDto updateUser(@RequestBody @Validated(Update.class) EventDto user, @PathVariable Long id) {
+    public EventDto updateEvent(@RequestBody @Validated(Update.class) EventDto user, @PathVariable Long id) {
         log.info("Получен запрос на изменение данных о пользователе с ID: " + id);
         return eventService.updateEvent(user, id);
     }
     @ResponseBody
     @PatchMapping("/add_user/{id}")
-    public List<UserDto> addUserToEvent (@RequestBody @Validated(Update.class) EventDto eventDto,
+    public List<UserDto> addUserToEvent (@RequestHeader(PARTICIPANTS) Long adminId,
+                                         @PathVariable Long eventId,
                                          @PathVariable Long id,
                                          @RequestParam(required = false, defaultValue = "0") int from,
                                          @RequestParam(required = false, defaultValue = "20") int size){
-        return eventService.addUserToEvent(eventDto,id,from,size);
+        return eventService.addUserToEvent(eventId,id,from,size);
     }
 
     @DeleteMapping("/{id}")
@@ -87,6 +89,4 @@ public class EventController {
         log.info("Получен запрос на удаление пользователя с ID: " + id);
         eventService.deleteEventById(id);
     }
-
-
 }

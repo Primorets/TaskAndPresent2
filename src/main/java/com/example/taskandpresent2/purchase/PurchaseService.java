@@ -11,9 +11,9 @@ public interface PurchaseService {
 
     List<PurchaseDto> getAllPurchasesByBuyerId(Long buyerId, int from, int size);
 
-    PurchaseDto createPurchase(PurchaseDto PurchaseDto);
+    PurchaseDto createPurchase(Long userId, PurchaseDto PurchaseDto);
 
-    PurchaseDto updatePurchase(PurchaseDto user, Long id);
+    PurchaseDto updatePurchase(Long userId,PurchaseDto user, Long id);
 
     void deletePurchaseById(Long id);
 
