@@ -1,5 +1,6 @@
-package com.example.taskandpresent2.event;
+package com.example.taskandpresent2.event.model;
 
+import com.example.taskandpresent2.event.StatusEvent;
 import com.example.taskandpresent2.purchase.Purchase;
 import com.example.taskandpresent2.user.User;
 import lombok.AllArgsConstructor;
@@ -14,35 +15,43 @@ import java.util.List;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "events", schema = "public")
+@Table(name = "EVENTS", schema = "public")
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "ID")
     private Long id;//Уникальный идентификационный номер задачи, по которому её можно будет найти.
-    @Column(name = "name")
+    @Column(name = "NAME")
     private String name;//Название, кратко описывающее суть задачи (например, «Переезд»).
-    @Column(name = "description")
+    @Column(name = "DESCRIPTION")
     private String description;//Описание, в котором раскрываются детали.
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status_event")
+    @Column(name = "STATUS_EVENT")
     private StatusEvent status;//Статус, отображающий её прогресс.
 
-    @Column(name = "start_date")
+    @Column(name = "START_DATE")
     private LocalDateTime start;
 
-    @Column(name = "end_date")
+    @Column(name = "END_DATE")
     private LocalDateTime end;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "event_participants",joinColumns = @JoinColumn(name = "event_id",
-            referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "participant_id",referencedColumnName = "id"))
+
+    @ManyToMany(cascade = CascadeType.MERGE)
+    @JoinTable(name = "EVENT_PARTICIPANTS", joinColumns = {@JoinColumn(name = "EVENT_ID",
+            referencedColumnName = "ID")},
+            inverseJoinColumns = {@JoinColumn(name = "PARTICIPANT_ID", referencedColumnName = "ID")})
+
+
     private List<User> participants;//пользователи, которые учавствуют в мероприятии
 
-    @OneToMany
-    @JoinTable(name = "event_purchases",
-            joinColumns = @JoinColumn(name = "purchase_id",referencedColumnName = "id"))
+    @OneToMany(cascade = CascadeType.MERGE)
+    @JoinTable(name = "EVENT_PURCHASES",
+            joinColumns = {@JoinColumn(name = "EVENT_ID", referencedColumnName = "ID")},
+            inverseJoinColumns = {@JoinColumn(name = "PURCHASE_ID",referencedColumnName = "ID")})
     private List<Purchase> purchases;
+
+  /*  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "event")
+    private List<Image> images;*/
+
 }

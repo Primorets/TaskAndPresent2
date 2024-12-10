@@ -45,16 +45,16 @@ public class PurchaseController {
     @ResponseBody
     @PatchMapping("/{id}")
     public PurchaseDto updatePurchase(@RequestHeader(PARTICIPANTS) Long userId,
-                                      @RequestBody @Validated(Update. class) PurchaseDto purchaseDto,
+                                      @RequestBody @Validated(Update.class) PurchaseDto purchaseDto,
                                       @PathVariable Long id) {
         log.info("Получен запрос на изменение данных о покупке с ID: " + id);
-        return purchaseService.updatePurchase(userId,purchaseDto, id);
+        return purchaseService.updatePurchase(userId, purchaseDto, id);
     }
 
     @DeleteMapping("/{id}")
-    public void deletePurchaseById(@PathVariable Long id) {
+    public void deletePurchaseById(@RequestHeader(PARTICIPANTS) Long userId, @PathVariable Long id) {
         log.info("Получен запрос на удаление покупки с ID: " + id);
-        purchaseService.deletePurchaseById(id);
+        purchaseService.deletePurchaseById(userId,id);
     }
 
     @GetMapping("/search")
@@ -62,6 +62,6 @@ public class PurchaseController {
                                                    @RequestParam(required = false, defaultValue = "0") int from,
                                                    @RequestParam(required = false, defaultValue = "20") int size) {
         log.info("Получен запрос на поиск всех покупок");
-        return purchaseService.searchAllPurchases(text,from,size);
+        return purchaseService.searchAllPurchases(text, from, size);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.taskandpresent2.event;
 
+import com.example.taskandpresent2.event.model.Event;
 import com.example.taskandpresent2.purchase.Purchase;
 import com.example.taskandpresent2.user.User;
 import org.springframework.data.domain.Pageable;
@@ -8,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface EventRepository extends JpaRepository<Event,Long> {
      @Query("SELECT e FROM Event e JOIN e.participants u WHERE u.id = :buyer_id" )
@@ -21,4 +23,7 @@ public interface EventRepository extends JpaRepository<Event,Long> {
 
      @Query("SELECT p FROM Event e JOIN e.purchases p WHERE e.id = :event_id")
      List<Purchase> findAllPurchasesByEventId(@Param("event_id")Long eventId, Pageable pageable);
+
+     @Query("select e FROM Event e where e.id=:event_id")
+     Optional<Event> findById(@Param("event_id")Long eventId);
 }

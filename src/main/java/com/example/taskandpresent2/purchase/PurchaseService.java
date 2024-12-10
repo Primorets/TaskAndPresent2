@@ -1,6 +1,7 @@
 package com.example.taskandpresent2.purchase;
 
 import com.example.taskandpresent2.purchase.model.PurchaseDto;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,7 +16,9 @@ public interface PurchaseService {
 
     PurchaseDto updatePurchase(Long userId,PurchaseDto user, Long id);
 
-    void deletePurchaseById(Long id);
+
+    @Transactional
+    void deletePurchaseById(Long userId, Long id);
 
     List<PurchaseDto> searchAllPurchases(String text, int from, int size);
 }

@@ -3,7 +3,6 @@ package com.example.taskandpresent2.user;
 import com.example.taskandpresent2.exception.DuplicateEmailException;
 import com.example.taskandpresent2.exception.UserNotFoundException;
 import com.example.taskandpresent2.exception.ValidationException;
-import com.example.taskandpresent2.user.model.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,15 +18,21 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private UserMapper userMapper;
+
     @Override
     public UserDto getUserById(Long id) {
-        return UserMapper.toUserDto(userRepository.findById(id).orElseThrow(()
+        return UserMapper.toUserDto
+                (userRepository.findById(id).orElseThrow(()
                 -> new UserNotFoundException("Пользователь не был зарегестрирован.")));
     }
 
     @Override
     public List<UserDto> getAllUsers() {
-        return userRepository.findAll().stream().map(UserMapper::toUserDto).collect(toList());
+        return userRepository.findAll().stream()
+                .map(UserMapper::toUserDto)
+                .collect(toList());
     }
 
     @Transactional
@@ -55,10 +60,10 @@ public class UserServiceImpl implements UserService {
             throw new DuplicateEmailException("Email уже зарегестрирован");
 
         }
-        if (userDto.getEventDtoList() == null) {
-            userDto.setEventDtoList(new ArrayList<>());
+        if (userDto.getEventIds() == null) {
+            userDto.setEventIds(new ArrayList<>());
         }
-        return UserMapper.toUserDto(userRepository.save(UserMapper.toUser(userDto)));
+        return UserMapper.toUserDto((userRepository.save(UserMapper.toUser(userDto))));
     }
 
     @Transactional
@@ -66,8 +71,8 @@ public class UserServiceImpl implements UserService {
     public UserDto createUser(UserDto userDto) {
         validateUser(userDto);
         try {
-            if (userDto.getEventDtoList() == null) {
-                userDto.setEventDtoList(new ArrayList<>());
+            if (userDto.getEventIds() == null) {
+                userDto.setEventIds(new ArrayList<>());
             }
             return UserMapper.toUserDto(userRepository.save(UserMapper.toUser(userDto)));
         } catch (DuplicateEmailException duplicateEmailException) {

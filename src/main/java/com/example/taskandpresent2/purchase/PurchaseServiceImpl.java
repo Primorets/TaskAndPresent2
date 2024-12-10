@@ -46,17 +46,18 @@ public class PurchaseServiceImpl implements PurchaseService {
                 .collect(toList());
     }
 
+    @Transactional
     @Override
     public PurchaseDto createPurchase(Long userId, PurchaseDto purchaseDto) {
         validatePurchase(purchaseDto);
-        checkUserInEvent(userId,purchaseDto.getEventDtoId());
+        eventService.checkUserInEvent(userId, purchaseDto.getEventDtoId());
         return PurchaseMapper.toPurchaseDto(purchaseRepository.save(purchaseMapper.toPurchase(purchaseDto)));
     }
 
     @Transactional
     @Override
-    public PurchaseDto updatePurchase(Long userId,PurchaseDto purchaseDto, Long id) {
-        checkUserInEvent(userId,purchaseDto.getEventDtoId());
+    public PurchaseDto updatePurchase(Long userId, PurchaseDto purchaseDto, Long id) {
+        eventService.checkUserInEvent(userId, purchaseDto.getEventDtoId());
         purchaseDto.setId(id);
         Purchase purchase = purchaseRepository.findById(purchaseDto.getId()).orElseThrow(()
                 -> new UserNotFoundException("Пользователь не был зарегестрирован."));
@@ -69,8 +70,8 @@ public class PurchaseServiceImpl implements PurchaseService {
         if (purchaseDto.getQuantity() == 0) {
             purchaseDto.setQuantity(purchase.getQuantity());
         }
-        if (purchaseDto.getBuyer() == null) {
-            purchaseDto.setBuyer(purchase.getBuyer());
+        if (purchaseDto.getBuyerId() == null) {
+            purchaseDto.setBuyerId(purchase.getBuyer().getId());
         }
         if (purchaseDto.getDimension() == null) {
             purchaseDto.setDimension(purchase.getDimension());
@@ -80,7 +81,8 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     @Transactional
     @Override
-    public void deletePurchaseById(Long id) {
+    public void deletePurchaseById(Long userId,Long id) {
+        eventService.checkUserInEvent(userId,getPurchaseById(id).getEventDtoId());
         purchaseRepository.deleteById(id);
     }
 
@@ -105,12 +107,6 @@ public class PurchaseServiceImpl implements PurchaseService {
         }
         if (purchaseDto.getEventDtoId() == null || purchaseDto.getEventDtoId() == 0) {
             throw new ValidationException("Не указано id мероприятия");
-        }
-    }
-
-    private void checkUserInEvent(Long userId, Long eventId) {
-        if (!eventService.checkUserInEvent(userId, eventId)) {
-            throw new UserNotFoundException("User id: " + userId + "не учавствует в мероприятии id:" + eventId);
         }
     }
 }

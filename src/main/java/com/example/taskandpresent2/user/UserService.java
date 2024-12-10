@@ -1,7 +1,5 @@
 package com.example.taskandpresent2.user;
 
-import com.example.taskandpresent2.user.model.UserDto;
-
 import java.util.List;
 
 public interface UserService {

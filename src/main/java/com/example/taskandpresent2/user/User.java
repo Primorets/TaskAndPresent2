@@ -2,7 +2,8 @@ package com.example.taskandpresent2.user;
 
 
 import com.example.taskandpresent2.Create;
-import com.example.taskandpresent2.event.Event;
+import com.example.taskandpresent2.event.model.Event;
+import com.example.taskandpresent2.purchase.Purchase;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,26 +18,30 @@ import java.util.List;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "users", schema = "public", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
+@Table(name = "USERS", schema = "public", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "ID")
     private Long id;
     @NotBlank(groups = {Create.class})
-    @Column(name = "name")
+    @Column(name = "NAME")
     private String name;
     @Email
     @NotBlank(groups = {Create.class})
-    @Column(name = "email")
+    @Column(name = "EMAIL")
     private String email;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "event_participants",
-            joinColumns = @JoinColumn(name = "participant_id",
-            referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "event_id",referencedColumnName = "id"))
+    @ManyToMany(cascade = CascadeType.MERGE)
+    @JoinTable(name = "EVENT_PARTICIPANTS",
+            joinColumns = {@JoinColumn(name = "PARTICIPANT_ID",
+                    referencedColumnName = "ID")},
+            inverseJoinColumns = {@JoinColumn(name = "EVENT_ID", referencedColumnName = "ID")})
     private List<Event> events = new ArrayList<>();
 
+    @OneToMany(cascade = CascadeType.MERGE)
+    @JoinTable(name = "USER_PURCHASES", joinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")},
+            inverseJoinColumns = {@JoinColumn(name = "PURCHASE_ID", referencedColumnName = "ID")})
+    private List<Purchase> purchases = new ArrayList<>();
 }
 

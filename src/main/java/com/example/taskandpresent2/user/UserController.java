@@ -3,7 +3,6 @@ package com.example.taskandpresent2.user;
 
 import com.example.taskandpresent2.Create;
 import com.example.taskandpresent2.Update;
-import com.example.taskandpresent2.user.model.UserDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
